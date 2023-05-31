@@ -135,9 +135,9 @@ namespace restaurante_web_app.Controllers
             {
                 return NotFound("No se encontraron datos para la fecha especificada.");
             }
-           
-              
-            return Ok(data);  
+
+
+            return Ok(data);
 
         }
         private DateTime GetFirstDayOfWeek(int year, int month, int weekNumber)

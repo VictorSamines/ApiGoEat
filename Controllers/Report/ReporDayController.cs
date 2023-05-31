@@ -73,9 +73,9 @@ namespace restaurante_web_app.Controllers
                             })
                         }).ToList();
             // Validar la fecha o cualquier otro criterio necesario
-            
 
-            
+
+
             if (data == null)
             {
                 return NotFound("No se encontraron datos para la fecha especificada.");
@@ -109,33 +109,33 @@ namespace restaurante_web_app.Controllers
 
             // Get the data from the database for the current week
             var data = (from c in _dbContext.Clientes
-                       join v in _dbContext.Ventas on c.IdCliente equals v.IdCliente
-                       join d in _dbContext.DetalleVenta on v.IdVenta equals d.IdVenta
-                       join m in _dbContext.Menus on d.IdPlatillo equals m.IdPlatillo
-                       where v.Fecha >= weekStartDate && v.Fecha < weekEndDate
-                       group new { v, d, m } by new { v.IdVenta, c.IdCliente, c.NombreApellido, c.Institucion } into groupedData
-                       select new
-                       {
-                           Cliente = new
-                           {
-                               groupedData.Key.IdCliente,
-                               groupedData.Key.NombreApellido,
-                               groupedData.Key.Institucion
-                           },
-                           Total = groupedData.Sum(item => item.d.Subtotal),
-                           Ventas = groupedData.Select(item => new
-                           {
-                               item.v.IdVenta,
-                               item.v.NumeroComanda,
-                               item.v.Fecha,
-                               item.v.Total,
-                               item.v.IdMesero,
-                               item.d.Cantidad,
-                               item.d.Subtotal,
-                               item.m.Platillo,
-                               item.m.Precio
-                           })
-                       }).ToList();
+                        join v in _dbContext.Ventas on c.IdCliente equals v.IdCliente
+                        join d in _dbContext.DetalleVenta on v.IdVenta equals d.IdVenta
+                        join m in _dbContext.Menus on d.IdPlatillo equals m.IdPlatillo
+                        where v.Fecha >= weekStartDate && v.Fecha < weekEndDate
+                        group new { v, d, m } by new { v.IdVenta, c.IdCliente, c.NombreApellido, c.Institucion } into groupedData
+                        select new
+                        {
+                            Cliente = new
+                            {
+                                groupedData.Key.IdCliente,
+                                groupedData.Key.NombreApellido,
+                                groupedData.Key.Institucion
+                            },
+                            Total = groupedData.Sum(item => item.d.Subtotal),
+                            Ventas = groupedData.Select(item => new
+                            {
+                                item.v.IdVenta,
+                                item.v.NumeroComanda,
+                                item.v.Fecha,
+                                item.v.Total,
+                                item.v.IdMesero,
+                                item.d.Cantidad,
+                                item.d.Subtotal,
+                                item.m.Platillo,
+                                item.m.Precio
+                            })
+                        }).ToList();
             if (data == null)
             {
                 return NotFound("No se encontraron datos para la fecha especificada.");
@@ -288,7 +288,7 @@ namespace restaurante_web_app.Controllers
                             })
                         }).ToList();
 
-            
+
             if (data == null)
             {
                 return NotFound("No se encontraron datos para la fecha especificada.");
@@ -346,7 +346,7 @@ namespace restaurante_web_app.Controllers
                             })
                         }).ToList();
 
-             if (data == null)
+            if (data == null)
             {
                 return NotFound("No se encontraron datos para la fecha especificada.");
             }
