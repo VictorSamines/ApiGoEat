@@ -45,11 +45,14 @@ namespace restaurante_web_app.Controllers
             decimal? porcentajeCambioGastos = CalculatePorcentajeCambio(totalGastos, totalGastosMesAnterior);
             decimal? porcentajeCambioGanancia = CalculatePorcentajeCambio(ganancia, gananciaMesAnterior);
 
+            decimal? totalVentasHoy = await GetTotalToday("Ventas", fechaActual);
+            decimal? totalGastosHoy = await GetTotalToday("Gastos", fechaActual);
+
             decimal? cajaActual = 0;
 
             if (cajaDiaria != null && cajaDiaria.Estado == true)
             {
-                cajaActual = cajaDiaria.SaldoInicial + (totalVentas ?? 0) - (totalGastos ?? 0);
+                cajaActual = cajaDiaria.SaldoInicial + (totalVentasHoy ?? 0) - (totalGastosHoy ?? 0);
             }
 
             var data = new
@@ -64,6 +67,25 @@ namespace restaurante_web_app.Controllers
             };
 
             return new JsonResult(data);
+        }
+        private async Task<decimal?> GetTotalToday(string tableName, DateOnly date)
+        {
+            decimal? total = null;
+            if (tableName == "Ventas")
+            {
+                total = await _dbContext.Ventas
+                    .Where(v => v.Fecha.Value.Day == date.Day && v.Fecha.Value.Month == date.Month
+                    && v.Fecha.Value.Year == date.Year)
+                    .SumAsync(v => v.Total);
+            }
+            else if (tableName == "Gastos")
+            {
+                total = await _dbContext.Gastos
+                    .Where(g => g.Fecha.Value.Day == date.Day && g.Fecha.Value.Month == date.Month
+                    && g.Fecha.Value.Year == date.Year)
+                    .SumAsync(g => g.Total);
+            }
+            return total;
         }
 
         private async Task<decimal?> GetTotalByMonth(string tableName, DateOnly date)
