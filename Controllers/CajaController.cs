@@ -19,23 +19,51 @@ namespace restaurante_web_app.Controllers
             _dbContext = dbContext;
         }
 
-        [HttpGet("{caja}")]
-        public async Task<JsonResult> GetCaja()
+        [HttpGet("saldo-ultima-caja")]
+        public async Task<JsonResult> GetSaldoUltimaCaja()
         {
-            // Obtener la fecha actual
-            DateOnly fechaActual = DateOnly.FromDateTime(DateTime.Now);
+            var ultimaCaja = await _dbContext.CajaDiaria
+                .OrderByDescending(c => c.IdCajaDiaria)
+                .FirstOrDefaultAsync();
 
-            var fechaAnterior = fechaActual.AddDays(-1);
-            var cajaAnterior = await _dbContext.CajaDiaria
-                .OrderByDescending(c => c.Fecha)
-                .FirstOrDefaultAsync(c => c.Fecha == fechaAnterior);
-
-            if (cajaAnterior == null)
+            if (ultimaCaja == null)
             {
-                return new JsonResult( new { cajaAnterior = 0 });
+                return new JsonResult(new { saldoFinal = 0 });
             }
 
-            return new JsonResult(new { cajaAnterior = cajaAnterior.SaldoFinal });
+            return new JsonResult(new { saldoFinal = ultimaCaja.SaldoFinal });
+        }
+
+        [HttpGet("ultima-caja")]
+        public async Task<ActionResult<CajaDtoOut>> GetUltimaCaja()
+        {
+            var ultimaCaja = await _dbContext.CajaDiaria
+                .OrderByDescending(c => c.IdCajaDiaria)
+                .FirstOrDefaultAsync();
+
+            if (ultimaCaja == null)
+            {
+                return NotFound();
+            }
+
+            decimal? totalVentas = await GetTotalByMonth("Ventas", ultimaCaja.Fecha);
+            decimal? totalGastos = await GetTotalByMonth("Gastos", ultimaCaja.Fecha);
+
+            var cajaDtoOut = new CajaDtoOut
+            {
+                IdCajaDiaria = ultimaCaja.IdCajaDiaria,
+                Fecha = ultimaCaja.Fecha,
+                Estado = ultimaCaja.Estado,
+                SaldoInicial = ultimaCaja.SaldoInicial,
+                Ingreso = totalVentas,
+                Egreso = totalGastos,
+                Caja = ultimaCaja.SaldoInicial + (totalVentas ?? 0) - (totalGastos ?? 0),
+                Entrega = ultimaCaja.SaldoFinal,
+                SaldoBruto = totalVentas,
+                Ganancia = (totalVentas ?? 0) - (totalGastos ?? 0)
+            };
+
+            return cajaDtoOut;
         }
 
 
