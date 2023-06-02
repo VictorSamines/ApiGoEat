@@ -128,7 +128,7 @@ namespace restaurante_web_app.Controllers
                 Proveedor = gasto.IdProveedorNavigation != null ? gasto.IdProveedorNavigation.Nombre : string.Empty
             };
 
-            return CreatedAtAction(nameof(GetById), new { id = gasto.IdGasto }, gastoDtoOut);
+            return Ok(gastoDtoOut);
         }
 
         [Authorize(Roles = "Administrador")]
