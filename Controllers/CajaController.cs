@@ -129,13 +129,12 @@ namespace restaurante_web_app.Controllers
             // Obtener el saldo inicial ingresado
             decimal? saldoInicial = cajaDtoIn.SaldoInicial;
 
-            // Obtener el saldo final de la caja del día anterior y sumarle el saldo inicial
-            var fechaAnterior = fechaActual.AddDays(-1);
-            var cajaAnterior = await _dbContext.CajaDiaria
+            // Obtener la última caja ingresada
+            var ultimaCaja = await _dbContext.CajaDiaria
                 .OrderByDescending(c => c.Fecha)
-                .FirstOrDefaultAsync(c => c.Fecha == fechaAnterior);
+                .FirstOrDefaultAsync();
 
-            decimal? saldoNuevo = cajaAnterior != null ? cajaAnterior.SaldoFinal + saldoInicial : saldoInicial;
+            decimal? saldoNuevo = ultimaCaja != null ? ultimaCaja.SaldoFinal + saldoInicial : saldoInicial;
 
             // Crear el nuevo objeto CajaDiaria
             var nuevaCajaDiaria = new CajaDiaria
