@@ -29,8 +29,8 @@ namespace restaurante_web_app.Controllers
             //DateOnly fechaMesAnterior = new DateOnly(2023, 3, 14);
 
             var cajaDiaria = await _dbContext.CajaDiaria
-                .OrderByDescending(c => c.Fecha)
-                .FirstOrDefaultAsync(c => c.Fecha == fechaActual);
+                .OrderByDescending(c => c.IdCajaDiaria)
+                .FirstOrDefaultAsync();
 
             decimal? totalVentas = await GetTotalByMonth("Ventas", fechaActual);
             decimal? totalVentasMesAnterior = await GetTotalByMonth("Ventas", fechaMesAnterior);
