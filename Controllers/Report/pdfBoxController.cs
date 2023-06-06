@@ -353,7 +353,7 @@ namespace restaurante_web_app.Controllers.Report
             document.Add(new Paragraph("\n+ Subtotal: " + subtotal.ToString(), headerFont));
             document.Add(new Paragraph("- Total Gastos: " + totalGastos.ToString(), headerFont));
 
-            document.Add(new Paragraph("\nSALDO FINAL: " + cajaDiaria.SaldoFinal.ToString(), headerFont));
+            document.Add(new Paragraph($"\nSaldo Final de caja {cajaDiaria.Fecha}: " + cajaDiaria.SaldoFinal.ToString(), headerFont));
 
             // Linea separador
             LineSeparator line3 = new LineSeparator();
