@@ -5,7 +5,7 @@ using restaurante_web_app.Models;
 using iTextSharp;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-
+using Microsoft.AspNetCore.Cors;
 using System;
 using System.IO;
 using System.Linq;
@@ -16,6 +16,7 @@ using System.Globalization;
 
 namespace restaurante_web_app.Controllers.Report
 {
+    [EnableCors("ReglasCors")]
     [Route("api/[controller]")]
     [ApiController]
     public class pdfController : ControllerBase

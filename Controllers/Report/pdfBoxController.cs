@@ -1,7 +1,7 @@
 ﻿using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Mvc;
 using restaurante_web_app.Models;
-
+using Microsoft.AspNetCore.Cors;
 using iTextSharp.text;
 using Microsoft.AspNetCore.Http;
 using System.Globalization;
@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 
 namespace restaurante_web_app.Controllers.Report
 {
+    [EnableCors("ReglasCors")]
     [Route("api/[controller]")]
     [ApiController]
     public class pdfBoxController : ControllerBase

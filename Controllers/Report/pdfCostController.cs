@@ -9,11 +9,13 @@ using iTextSharp.text.pdf.draw;
 using System.Drawing;
 using System.Data;
 using System;
+using Microsoft.AspNetCore.Cors;
 
 
 namespace restaurante_web_app.Controllers.Report
 {
 
+    [EnableCors("ReglasCors")]
     [Route("api/[controller]")]
     [ApiController]
     public class pdfCostController : ControllerBase
