@@ -26,11 +26,22 @@ builder.Services.AddControllers().AddJsonOptions(opt =>
 
 //añadir las reglas de CORS para permitir el uso de la API en cualquier dominio
 var reglasCors = "ReglasCors";
-builder.Services.AddCors(opt =>
+//builder.Services.AddCors(opt =>
+//{
+//    opt.AddPolicy(name: reglasCors, builder =>
+//    {
+//        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+//    });
+//});
+
+builder.Services.AddCors(options =>
 {
-    opt.AddPolicy(name: reglasCors, builder =>
+    options.AddPolicy(name: reglasCors,
+    builder =>
     {
-        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        builder.WithOrigins("*")
+        .AllowAnyHeader()
+        .AllowAnyMethod(); ;
     });
 });
 

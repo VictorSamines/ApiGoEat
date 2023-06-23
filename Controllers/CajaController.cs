@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using restaurante_web_app.Data.DTOs;
 using restaurante_web_app.Models;
+using System.Data;
 
 namespace restaurante_web_app.Controllers
 {
@@ -19,6 +21,7 @@ namespace restaurante_web_app.Controllers
             _dbContext = dbContext;
         }
 
+        [Authorize(Roles = "Administrador")]
         [HttpGet("{caja}")]
         public async Task<JsonResult> GetCaja()
         {
@@ -38,7 +41,7 @@ namespace restaurante_web_app.Controllers
             return new JsonResult(new { cajaAnterior = cajaAnterior.SaldoFinal });
         }
 
-
+        [Authorize(Roles = "Administrador")]
         [HttpGet]
         public async Task<IEnumerable<CajaDtoOut>> GetAll()
         {
@@ -92,6 +95,7 @@ namespace restaurante_web_app.Controllers
             return total;
         }
 
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         public async Task<IActionResult> Create(CajaDtoIn cajaDtoIn)
         {
@@ -101,6 +105,9 @@ namespace restaurante_web_app.Controllers
             // Obtener el saldo inicial ingresado
             decimal? saldoInicial = cajaDtoIn.SaldoInicial;
 
+
+            
+
             // Obtener el saldo final de la caja del día anterior y sumarle el saldo inicial
             var fechaAnterior = fechaActual.AddDays(-1);
             var cajaAnterior = await _dbContext.CajaDiaria
@@ -108,6 +115,19 @@ namespace restaurante_web_app.Controllers
                 .FirstOrDefaultAsync(c => c.Fecha == fechaAnterior);
 
             decimal? saldoNuevo = cajaAnterior != null ? cajaAnterior.SaldoFinal + saldoInicial : saldoInicial;
+            //decimal? saldoNuevo = cajaAnterior != null ? cajaAnterior.SaldoFinal + saldoInicial : (decimal?)null;
+
+
+            // Verificar si ya existe una caja con la fecha actual
+
+            var cajaExistente = await _dbContext.CajaDiaria.FirstOrDefaultAsync(c => c.Fecha == fechaActual);
+
+            if (cajaExistente != null)
+            {
+                return BadRequest(new { mensaje = "Ya existe caja para la fecha actual." });
+            }
+
+            /////////////////////
 
             // Crear el nuevo objeto CajaDiaria
             var nuevaCajaDiaria = new CajaDiaria
@@ -125,6 +145,7 @@ namespace restaurante_web_app.Controllers
             return Ok(); // O devuelve la respuesta deseada
         }
 
+        [Authorize(Roles = "Administrador")]
         [HttpPut("{id:long}")]
         public async Task<IActionResult> Update(long id, CajaUpdateDto cajaUpdateDto)
         {
