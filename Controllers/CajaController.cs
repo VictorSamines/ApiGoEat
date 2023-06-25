@@ -106,14 +106,14 @@ namespace restaurante_web_app.Controllers
             if (tableName == "Ventas")
             {
                 total = await _dbContext.Ventas
-                    .Where(v => v.Fecha.Value.Day == date.Day && v.Fecha.Value.Month == date.Month 
+                    .Where(v => v.Fecha.Value.Day == date.Day && v.Fecha.Value.Month == date.Month
                     && v.Fecha.Value.Year == date.Year)
                     .SumAsync(v => v.Total);
             }
             else if (tableName == "Gastos")
             {
                 total = await _dbContext.Gastos
-                    .Where(g => g.Fecha.Value.Day == date.Day && g.Fecha.Value.Month == date.Month 
+                    .Where(g => g.Fecha.Value.Day == date.Day && g.Fecha.Value.Month == date.Month
                     && g.Fecha.Value.Year == date.Year)
                     .SumAsync(g => g.Total);
             }
@@ -129,12 +129,12 @@ namespace restaurante_web_app.Controllers
             // Obtener el saldo inicial ingresado
             decimal? saldoInicial = cajaDtoIn.SaldoInicial;
 
-            // Obtener la última caja ingresada
-            var ultimaCaja = await _dbContext.CajaDiaria
-                .OrderByDescending(c => c.Fecha)
+            // Obtener el saldo final de la caja y sumarle el saldo inicial
+            var cajaAnterior = await _dbContext.CajaDiaria
+                .OrderByDescending(c => c.IdCajaDiaria)
                 .FirstOrDefaultAsync();
 
-            decimal? saldoNuevo = ultimaCaja != null ? ultimaCaja.SaldoFinal + saldoInicial : saldoInicial;
+            decimal? saldoNuevo = cajaAnterior != null ? cajaAnterior.SaldoFinal + saldoInicial : saldoInicial;
 
             // Crear el nuevo objeto CajaDiaria
             var nuevaCajaDiaria = new CajaDiaria
